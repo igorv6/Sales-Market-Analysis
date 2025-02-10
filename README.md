@@ -15,11 +15,40 @@ Adventure Works is a fictional company created by Microsoft to provide a realist
 - Workforce productivity and retention
 
 **Dataset**:
-1 Fact Table containts details of sales and order date and 6 dimensions table ( Products, Regions, Resellers, SalesPersons, 
+1 Fact Table containts details of sales and order date and 5 dimensions table ( Products, Regions, Resellers, SalesPersons, SalesPersonRegions)
 
 ### Data Loading and Preparation
 Before loading the data from the Editor Script, I made some modification:
 I formatted the Order date in Sales Table to use a properly formatting
 ```
 Date(Date#(OrderDate,'dddd,MMMM DD, YYYY'), 'YYYY-MM-DD') as OrderDate,
+```
+Before starting my analysis, I created the Master Calendar in order to get better insight and use the time Intelligence Function.
+```
+// Creazione Calendario
+
+Let vMinDate = NUM('2017-06-30');
+Let vMaxDate = NUM('2020-05-31');
+
+MasterCalendar:
+
+let vMinDate = NUM('2017-06-30');
+Let vMaxDate = NUM('2020-05-31');
+MasterCalendar:
+
+Load
+DateNum,
+Date(DateNum, 'YYYY-MM-DD') as OrderDateFormatted,
+Year(DateNum) as Year,
+Date(DateNum,'WWWW') as Day,
+Date(DateNum,'MMMM') as Month,
+'Q' & Ceil(Month(DateNum) / 3) as Quarter,  
+Date(DateNum, 'MMMM YYYY') as MonthYearName;
+
+LOAD
+$(vMinDate) + (IterNo()) as DateNum
+AutoGenerate 1
+While
+$(vMinDate) + (IterNo()) <= $(vMaxDate);
+
 ```
